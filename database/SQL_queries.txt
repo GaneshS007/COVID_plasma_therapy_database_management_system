@@ -1,0 +1,101 @@
+Username: root
+Password: root
+
+Note: You can change the username and password in the code (DAO.java) to connect with your database. Path for DAO.java - PlasmaTherapy/src/dao/DAO.java
+
+Creating a database:
+
+CREATE DATABASE covid_pt_dbms;
+
+Table Creation:
+
+donor table
+
+CREATE TABLE `covid_pt_dbms`.`donor` (
+  `Donor_id` INT NOT NULL AUTO_INCREMENT,
+  `Name` CHAR (50) NOT NULL,
+  `Phone_no` VARCHAR (20) NOT NULL,
+  `Address` VARCHAR (100) NOT NULL,
+  `Age` INT NOT NULL,
+  `Weight` FLOAT NOT NULL,
+  `Blood_Group` VARCHAR (10) NOT NULL,
+  `Covid_pos_date` DATE NOT NULL,
+  `Covid_neg_date` DATE NOT NULL,
+  `Donation_status` CHAR (20) NOT NULL DEFAULT 'Pending',
+  `Incentive_status` CHAR (20) NOT NULL DEFAULT 'Pending',
+  PRIMARY KEY (`Donor_id`)
+) AUTO_INCREMENT = 1;
+
+Blood Bank table
+
+CREATE TABLE `covid_pt_dbms`.`blood_bank` (
+  `Bbank_id` INT NOT NULL AUTO_INCREMENT,
+  `Name` CHAR (50) NOT NULL,
+  `Phone_no` VARCHAR (20) NOT NULL,
+  `Address` VARCHAR (100) NOT NULL,
+  `Email` VARCHAR (256) NOT NULL,
+  `Username` VARCHAR (50) NOT NULL,
+  `Password` VARCHAR (128) NOT NULL,
+  PRIMARY KEY (`Bbank_id`),
+  UNIQUE INDEX `Username_UNIQUE` (`Username`)
+) AUTO_INCREMENT = 100;
+
+
+Hospital table
+
+CREATE TABLE `covid_pt_dbms`.`hospital` (
+  `Hospital_id` INT NOT NULL AUTO_INCREMENT,
+  `Name` CHAR (50) NOT NULL,
+  `Phone_no` VARCHAR (20) NOT NULL,
+  `Address` VARCHAR (100) NOT NULL,
+  `Email` VARCHAR (256) NOT NULL,
+  `Username` VARCHAR (50) NOT NULL,
+  `Password` VARCHAR (128) NOT NULL,
+  PRIMARY KEY (`Hospital_id`),
+  UNIQUE INDEX `Username_UNIQUE` (`Username`)
+) AUTO_INCREMENT = 200;
+
+
+Donation table
+
+CREATE TABLE `covid_pt_dbms`.`donation` (
+  `donation_id` INT NOT NULL AUTO_INCREMENT,
+  `Donor_id` INT NOT NULL,
+  `Bbank_id` INT,
+  `Blood_Group` VARCHAR (10),
+  `Quantity_of_plasma` INT,
+  `IgM` FLOAT,
+  `IgG` FLOAT,
+  `Hospital_request_status` CHAR (20) NOT NULL DEFAULT 'Not Requested',
+  PRIMARY KEY (`donation_id`),
+  CONSTRAINT `FK_DonationBloodBank` FOREIGN KEY (`Bbank_id`) REFERENCES `covid_pt_dbms`.`blood_bank` (`Bbank_id`) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT `FK_DonationDonor` FOREIGN KEY (`Donor_id`) REFERENCES `covid_pt_dbms`.`donor` (`Donor_id`) ON UPDATE CASCADE ON DELETE CASCADE
+) AUTO_INCREMENT = 300;
+
+
+Request table
+
+CREATE TABLE `covid_pt_dbms`.`request` (
+  `request_id` INT NOT NULL AUTO_INCREMENT,
+  `donation_id` INT NOT NULL,
+  `Hospital_id` INT NOT NULL,
+  `Request_status` CHAR (20) NOT NULL DEFAULT 'requested',
+  PRIMARY KEY (`request_id`),
+  CONSTRAINT `FK_RequestDonation` FOREIGN KEY (`donation_id`) REFERENCES `covid_pt_dbms`.`donation` (`donation_id`) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT `FK_RequestHospital` FOREIGN KEY (`Hospital_id`) REFERENCES `covid_pt_dbms`.`hospital` (`Hospital_id`) ON UPDATE CASCADE ON DELETE CASCADE
+) AUTO_INCREMENT = 400;
+
+ALTER TABLE `covid_pt_dbms`.`donor`
+  ADD UNIQUE INDEX `Name_phno_UNIQUE` (`Phone_no`, `Name`);
+
+ALTER TABLE `covid_pt_dbms`.`blood_bank`
+  ADD UNIQUE INDEX `Name_phno_UNIQUE` (`Name`, `Phone_no`);
+
+ALTER TABLE `covid_pt_dbms`.`hospital`
+  ADD UNIQUE INDEX `Name_phno_UNIQUE` (`Name`, `Phone_no`);
+
+ALTER TABLE `covid_pt_dbms`.`blood_bank`
+  ADD UNIQUE INDEX `Email_UNIQUE` (`Email`);
+
+ALTER TABLE `covid_pt_dbms`.`hospital`
+  ADD UNIQUE INDEX `Email_UNIQUE` (`Email`);
